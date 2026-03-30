@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sun & Spear Studios — Software for the Betterment of the World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --black:     #0d0d0d;
+    --dark:      #141414;
+    --surface:   #1a1a1a;
+    --surface2:  #222222;
+    --gold:      #c9a84c;
+    --gold-lt:   #e8c97a;
+    --gold-dk:   #8a6e2f;
+    --cream:     #f5efe0;
+    --cream2:    #ede4ce;
+    --muted:     #9a8c75;
+    --border:    rgba(201,168,76,0.25);
+    --glow:      rgba(201,168,76,0.12);
+    --radius:    4px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.35;
+  }
+
+  /* ─── PAGES ─── */
+  .page { display: none; min-height: 100vh; position: relative; z-index: 1; }
+  .page.active { display: block; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(13,13,13,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 3rem;
+    height: 64px;
+  }
+
+  .nav-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .nav-logo span { color: var(--cream2); opacity: 0.6; font-size: 0.7rem; display: block; letter-spacing: 0.3em; margin-top: 1px; }
+
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center;
+    padding: 80px 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Radial glow */
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 30%; left: 50%; transform: translate(-50%, -50%);
+    width: 700px; height: 700px;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  /* Capitol dome SVG watermark */
+  .hero-bg-art {
+    position: absolute;
+    bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 900px; opacity: 0.04;
+    pointer-events: none;
+  }
+
+  .studio-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.45em;
+    color: var(--gold-dk);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+    background: linear-gradient(160deg, var(--gold-lt) 0%, var(--gold) 40%, var(--gold-dk) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    animation: fadeUp 0.9s 0.1s ease both;
+  }
+
+  .hero-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.65rem, 1.5vw, 0.85rem);
+    letter-spacing: 0.55em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.9s 0.2s ease both;
+  }
+
+  .hero-divider {
+    width: 120px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 2.5rem;
+    animation: fadeUp 0.9s 0.3s ease both;
+  }
+
+  .hero-tagline {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    color: var(--cream2);
+    max-width: 560px;
+    margin: 0 auto 3rem;
+    opacity: 0.85;
+    line-height: 1.55;
+    animation: fadeUp 0.9s 0.4s ease both;
+  }
+
+  .store-btns {
+    display: flex; gap: 1.25rem; justify-content: center; flex-wrap: wrap;
+    animation: fadeUp 0.9s 0.55s ease both;
+    margin-bottom: 4rem;
+  }
+
+  .store-btn {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.85rem 2rem;
+    border: 1px solid var(--gold);
+    background: rgba(201,168,76,0.06);
+    color: var(--gold-lt);
+    text-decoration: none;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .store-btn:hover {
+    background: rgba(201,168,76,0.14);
+    box-shadow: 0 0 24px rgba(201,168,76,0.18);
+    transform: translateY(-2px);
+  }
+  .store-btn svg { width: 20px; height: 20px; fill: currentColor; }
+  .store-btn .btn-label { display: flex; flex-direction: column; text-align: left; }
+  .store-btn .btn-label small { font-size: 0.55rem; letter-spacing: 0.15em; opacity: 0.6; font-family: 'Cormorant Garamond', serif; text-transform: uppercase; }
+  .store-btn .btn-label span { font-size: 0.8rem; letter-spacing: 0.12em; }
+
+  .soon-badge {
+    display: inline-block;
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.9rem;
+    border-radius: 100px;
+    text-transform: uppercase;
+    margin-top: -2rem;
+    margin-bottom: 4rem;
+    animation: fadeUp 0.9s 0.65s ease both;
+  }
+
+  /* ─── FEATURES STRIP ─── */
+  .features-strip {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.9s 0.7s ease both;
+  }
+  .feature-cell {
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .feature-cell:last-child { border-right: none; }
+  .feature-cell .f-icon {
+    font-size: 1.5rem; margin-bottom: 0.75rem; display: block;
+    filter: sepia(1) saturate(2) hue-rotate(10deg);
+  }
+  .feature-cell h3 {
+    font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.25em;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 0.5rem;
+  }
+  .feature-cell p { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
+
+  /* ─── SECTION WRAPPER ─── */
+  .section {
+    max-width: 860px; margin: 0 auto; padding: 5rem 2rem;
+  }
+  .section-wide { max-width: 1100px; margin: 0 auto; padding: 5rem 2rem; }
+
+  .section-label {
+    font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.45em;
+    color: var(--gold-dk); text-transform: uppercase; margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 3rem);
+    color: var(--cream); line-height: 1.2; margin-bottom: 1.5rem;
+  }
+  .section-title em { font-style: italic; color: var(--gold-lt); }
+  .gold-rule {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin-bottom: 2rem;
+  }
+  .body-text { font-size: 1rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.5rem; }
+  .body-text strong { color: var(--cream2); font-weight: 500; }
+  .body-text a { color: var(--gold); text-decoration: none; }
+  .body-text a:hover { text-decoration: underline; }
+
+  /* ─── SCREENSHOT PLACEHOLDER ─── */
+  .game-preview {
+    position: relative; padding: 2rem 0;
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+  }
+  .mock-screen {
+    width: 180px; height: 320px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--muted); font-family: 'Cinzel', serif; font-size: 0.5rem;
+    letter-spacing: 0.2em; text-align: center; padding: 1rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .mock-screen:nth-child(2) { transform: translateY(-20px) scale(1.05); border-color: var(--gold); box-shadow: 0 20px 60px rgba(201,168,76,0.15); }
+  .mock-screen .screen-label { color: var(--gold); margin-bottom: 0.5rem; font-size: 0.6rem; }
+
+  /* ─── ABOUT ─── */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .about-logo-box {
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at center, rgba(201,168,76,0.06) 0%, transparent 70%);
+    padding: 3rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .about-logo-box svg { width: 100%; max-width: 240px; }
+
+  .value-list { list-style: none; margin-top: 2rem; }
+  .value-list li {
+    padding: 0.75rem 0; border-bottom: 1px solid var(--border);
+    display: flex; gap: 1rem; align-items: flex-start;
+    font-size: 1rem; color: var(--cream2);
+  }
+  .value-list li::before { content: '◆'; color: var(--gold); font-size: 0.5rem; margin-top: 0.5rem; flex-shrink: 0; }
+
+  /* ─── HELP ─── */
+  .help-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+  .help-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.75rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+  .help-card:hover { border-color: var(--gold); box-shadow: 0 0 24px var(--glow); }
+  .help-card h3 { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.6rem; }
+  .help-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+
+  .faq { margin-top: 3rem; }
+  .faq-item { border-bottom: 1px solid var(--border); }
+  .faq-q {
+    padding: 1.25rem 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--cream2);
+  }
+  .faq-q .arrow { color: var(--gold); transition: transform 0.3s; font-size: 0.8rem; }
+  .faq-q.open .arrow { transform: rotate(180deg); }
+  .faq-a { display: none; padding-bottom: 1.25rem; font-size: 0.95rem; color: var(--muted); line-height: 1.7; }
+  .faq-a.open { display: block; }
+
+  /* ─── PRIVACY ─── */
+  .legal-section { margin-bottom: 2.5rem; }
+  .legal-section h2 { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+  .legal-section p, .legal-section li { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 0.75rem; }
+  .legal-section ul { padding-left: 1.5rem; }
+  .legal-section li { margin-bottom: 0.4rem; }
+
+  /* ─── CONTACT ─── */
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 3rem; }
+  .contact-info h3 { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.75rem; }
+  .contact-info p { font-size: 0.95rem; color: var(--muted); line-height: 1.7; margin-bottom: 2rem; }
+  .contact-info a { color: var(--gold); text-decoration: none; }
+  .contact-info a:hover { text-decoration: underline; }
+
+  .contact-form label { display: block; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; margin-bottom: 0.4rem; margin-top: 1.25rem; }
+  .contact-form label:first-child { margin-top: 0; }
+  .contact-form input, .contact-form select, .contact-form textarea {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 0.75rem 1rem;
+    color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+    outline: none; transition: border-color 0.3s;
+    resize: vertical;
+  }
+  .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 2px var(--glow); }
+  .contact-form textarea { min-height: 140px; }
+  .contact-form select option { background: var(--surface); }
+  .submit-btn {
+    margin-top: 1.5rem; width: 100%;
+    padding: 0.9rem; background: transparent;
+    border: 1px solid var(--gold); color: var(--gold-lt);
+    font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    cursor: pointer; border-radius: var(--radius); transition: all 0.3s;
+  }
+  .submit-btn:hover { background: rgba(201,168,76,0.1); box-shadow: 0 0 24px rgba(201,168,76,0.2); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 3rem;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: gap;
+    gap: 1rem;
+    background: rgba(13,13,13,0.8);
+  }
+  .footer-brand { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3em; color: var(--gold); }
+  .footer-brand small { display: block; font-family: 'Cormorant Garamond', serif; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--muted); margin-top: 0.25rem; font-style: italic; }
+  .footer-links { display: flex; gap: 2rem; list-style: none; }
+  .footer-links a { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.2em; color: var(--muted); text-decoration: none; cursor: pointer; transition: color 0.3s; }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-copy { font-size: 0.75rem; color: var(--muted); font-style: italic; }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    nav { padding: 0 1.25rem; }
+    .nav-links { gap: 1.25rem; }
+    .nav-links a { font-size: 0.55rem; }
+    .features-strip { grid-template-columns: 1fr; }
+    .feature-cell { border-right: none; border-bottom: 1px solid var(--border); }
+    .feature-cell:last-child { border-bottom: none; }
+    .about-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .help-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
+    .footer-links { justify-content: center; flex-wrap: wrap; gap: 1rem; }
+  }
+
+  /* ─── PAGE TRANSITIONS ─── */
+  .page.active { animation: fadeUp 0.5s ease both; }
+
+  /* Scrollable interior pages */
+  #page-privacy .section, #page-help .section,
+  #page-contact .section, #page-about .section { padding-top: 7rem; }
+
+  /* ─── DECORATIVE CORNER ─── */
+  .corner-ornament {
+    position: absolute; top: 80px; right: 3rem;
+    width: 80px; height: 80px; opacity: 0.07;
+    pointer-events: none;
+  }
+
+  /* ─── PARCHMENT DIVIDER ─── */
+  .parchment-divider {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold) 70%, transparent 100%);
+    position: relative; margin: 0 auto;
+  }
+  .parchment-divider::before {
+    content: '◆';
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    background: var(--black); padding: 0 0.75rem;
+    color: var(--gold); font-size: 0.6rem;
+  }
+
+  /* ─── ABOUT PAGE MISSION STATEMENT ─── */
+  .mission-quote {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+    color: var(--cream);
+    text-align: center;
+    padding: 3rem 2rem;
+    border-left: 2px solid var(--gold);
+    border-right: 2px solid var(--gold);
+    position: relative;
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 2rem auto;
+  }
+  .mission-quote::before, .mission-quote::after {
+    content: '"';
+    font-size: 4rem; color: var(--gold-dk); opacity: 0.4;
+    position: absolute; line-height: 1;
+    font-family: 'Playfair Display', serif;
+  }
+  .mission-quote::before { top: 0.5rem; left: 1rem; }
+  .mission-quote::after { content: '"'; bottom: 0; right: 1rem; }
+
+  /* ─── TEAM CARD ─── */
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+  .team-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.75rem;
+    text-align: center;
+  }
+  .team-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dk), var(--gold));
+    margin: 0 auto 1rem;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--black);
+  }
+  .team-card h3 { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--cream); margin-bottom: 0.25rem; }
+  .team-card p { font-size: 0.8rem; color: var(--muted); }
+
+  /* ─── PILLAR CARDS ─── */
+  .pillar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+  .pillar-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 2rem 1.75rem;
+    position: relative; overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .pillar-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold-dk), var(--gold-lt));
+  }
+  .pillar-card:hover { border-color: var(--gold); box-shadow: 0 0 28px var(--glow); }
+  .pillar-icon { font-size: 1.6rem; margin-bottom: 1rem; display: block; }
+  .pillar-card h3 { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.75rem; }
+  .pillar-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.65; }
+  .pillar-sub { list-style: none; margin-top: 0.75rem; }
+  .pillar-sub li { font-size: 0.82rem; color: var(--muted); padding: 0.3rem 0; border-bottom: 1px solid rgba(201,168,76,0.1); }
+  .pillar-sub li::before { content: '◆ '; color: var(--gold-dk); font-size: 0.5rem; vertical-align: middle; }
+  .pillar-sub li:last-child { border-bottom: none; }
+
+  /* ─── REVENUE BREAKDOWN ─── */
+  .revenue-block { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 2.5rem; }
+  .rev-slice {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 2rem 1.5rem; text-align: center;
+  }
+  .rev-pct {
+    font-family: 'Cinzel Decorative', serif; font-size: 3rem; line-height: 1;
+    background: linear-gradient(160deg, var(--gold-lt), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+  .rev-slice h3 { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.75rem; }
+  .rev-slice p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+  .rev-bar { height: 3px; border-radius: 2px; margin-bottom: 1.5rem; }
+  .rev-bar.ops { background: linear-gradient(90deg, #5a4820, #c9a84c); }
+  .rev-bar.give { background: linear-gradient(90deg, #c9a84c, #e8c97a); }
+  .rev-bar.team { background: linear-gradient(90deg, #e8c97a, #f5efe0); }
+
+  /* ─── PROJECT CARDS ─── */
+  .project-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    display: grid; grid-template-columns: 1fr 2.5fr; min-height: 200px;
+    margin-bottom: 2rem;
+  }
+  .project-card:hover { border-color: var(--gold); box-shadow: 0 0 32px var(--glow); }
+  .project-thumb {
+    background: linear-gradient(135deg, #1a1608, #2d2410);
+    display: flex; align-items: center; justify-content: center;
+    border-right: 1px solid var(--border); padding: 2rem;
+  }
+  .project-thumb .thumb-icon { font-size: 3.5rem; }
+  .project-body { padding: 2rem 2.25rem; }
+  .project-status {
+    display: inline-block; font-family: 'Cinzel', serif; font-size: 0.55rem;
+    letter-spacing: 0.25em; text-transform: uppercase; padding: 0.2rem 0.75rem;
+    border-radius: 100px; border: 1px solid; margin-bottom: 0.75rem;
+  }
+  .status-active { color: #6fcf97; border-color: rgba(111,207,151,0.35); background: rgba(111,207,151,0.06); }
+  .status-upcoming { color: var(--muted); border-color: var(--border); }
+  .project-body h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--cream); margin-bottom: 0.5rem; }
+  .project-body h2 em { font-style: italic; color: var(--gold-lt); }
+  .project-body p { font-size: 0.92rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
+  .project-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .project-tag {
+    font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.15em;
+    color: var(--muted); border: 1px solid var(--border);
+    padding: 0.2rem 0.6rem; border-radius: 100px; text-transform: uppercase;
+  }
+  .project-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em;
+    color: var(--gold); text-transform: uppercase; cursor: pointer; transition: gap 0.2s;
+  }
+  .project-link:hover { gap: 0.7rem; }
+
+  @media (max-width: 768px) {
+    .pillar-grid { grid-template-columns: 1fr; }
+    .revenue-block { grid-template-columns: 1fr; }
+    .project-card { grid-template-columns: 1fr; }
+    .project-thumb { border-right: none; border-bottom: 1px solid var(--border); padding: 1.5rem; }
+  }
+
+  /* Toast for form */
+  .toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--surface2); border: 1px solid var(--gold);
+    color: var(--gold-lt); padding: 0.75rem 2rem;
+    font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.2em;
+    border-radius: var(--radius); z-index: 999;
+    transition: transform 0.3s ease;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav>
+  <a class="nav-logo" onclick="showPage('home')">
+    SUN &amp; SPEAR
+    <span>STUDIOS</span>
+  </a>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a onclick="showPage('about')" id="nav-about">About</a></li>
+    <li><a onclick="showPage('projects')" id="nav-projects">Projects</a></li>
+    <li><a onclick="showPage('help')" id="nav-help">Help</a></li>
+    <li><a onclick="showPage('privacy')" id="nav-privacy">Privacy</a></li>
+    <li><a onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     PAGE: HOME
+═══════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <section class="hero">
+    <!-- Capitol watermark -->
+    <svg class="hero-bg-art" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+      <rect x="350" y="200" width="200" height="200" fill="currentColor" opacity="0.5"/>
+      <rect x="390" y="160" width="120" height="50" fill="currentColor" opacity="0.5"/>
+      <ellipse cx="450" cy="160" rx="60" ry="80" fill="currentColor" opacity="0.5"/>
+      <rect x="430" y="80" width="40" height="80" fill="currentColor" opacity="0.5"/>
+      <rect x="200" y="270" width="500" height="130" fill="currentColor" opacity="0.3"/>
+      <rect x="100" y="320" width="700" height="80" fill="currentColor" opacity="0.2"/>
+    </svg>
+
+    <p class="studio-eyebrow">Sun &amp; Spear Studios Presents</p>
+
+    <h1 class="hero-title">Of The People</h1>
+    <p class="hero-subtitle">The Political Simulation Experience</p>
+    <div class="hero-divider"></div>
+    <p class="hero-tagline">From city hall to the Oval Office — build coalitions, pass legislation, and earn the trust of the American people.</p>
+
+    <div class="store-btns">
+      <a href="#" class="store-btn" title="Coming soon to Google Play">
+        <!-- Google Play icon -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3.18 23.76c.37.2.8.2 1.18-.01l12.45-7.19-2.87-2.88zM.5 1.5A1.5 1.5 0 0 0 0 2.63v18.74a1.5 1.5 0 0 0 .5 1.13l.06.05 10.5-10.5v-.25L.56 1.46zM22.04 10.31l-2.88-1.66-3.2 3.2 3.2 3.2 2.9-1.68c.83-.48.83-1.58-.02-2.06zM4.36.26 16.76 7.44l-2.87 2.88z"/>
+        </svg>
+        <span class="btn-label">
+          <small>Get it on</small>
+          <span>Google Play</span>
+        </span>
+      </a>
+      <a href="#" class="store-btn" title="Coming soon to the App Store">
+        <!-- Apple icon -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        <span class="btn-label">
+          <small>Download on the</small>
+          <span>App Store</span>
+        </span>
+      </a>
+    </div>
+    <p class="soon-badge">Coming Soon — Join the Waitlist</p>
+
+    <div class="features-strip">
+      <div class="feature-cell">
+        <span class="f-icon">🗳️</span>
+        <h3>Run for Office</h3>
+        <p>Start as mayor, climb to Congress, and campaign for the Presidency across 8,000+ real U.S. districts.</p>
+      </div>
+      <div class="feature-cell">
+        <span class="f-icon">📜</span>
+        <h3>Govern &amp; Legislate</h3>
+        <p>Sponsor bills, build coalitions across 22 voter factions, and navigate the realities of democratic governance.</p>
+      </div>
+      <div class="feature-cell">
+        <span class="f-icon">🎙️</span>
+        <h3>Debate &amp; Campaign</h3>
+        <p>Manage your media strategy, conduct opposition research, and debate rivals on the issues that matter.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAME SCREENSHOTS PLACEHOLDER -->
+  <div class="section-wide" style="text-align:center; padding-top:4rem; padding-bottom:4rem;">
+    <p class="section-label" style="text-align:center;">Gameplay Preview</p>
+    <h2 class="section-title" style="text-align:center;">Your Career. Your <em>Legacy.</em></h2>
+    <div style="width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 2rem;"></div>
+    <div class="game-preview">
+      <div class="mock-screen">
+        <span class="screen-label">Campaign HQ</span>
+        <p>Screenshot<br/>Placeholder</p>
+      </div>
+      <div class="mock-screen">
+        <span class="screen-label">Election Night</span>
+        <p>Screenshot<br/>Placeholder</p>
+      </div>
+      <div class="mock-screen">
+        <span class="screen-label">District Map</span>
+        <p>Screenshot<br/>Placeholder</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-brand">
+      SUN &amp; SPEAR STUDIOS
+      <small>Software for the betterment of the world</small>
+    </div>
+    <ul class="footer-links">
+      <li><a onclick="showPage('about')">About</a></li>
+      <li><a onclick="showPage('projects')">Projects</a></li>
+      <li><a onclick="showPage('help')">Help</a></li>
+      <li><a onclick="showPage('privacy')">Privacy Policy</a></li>
+      <li><a onclick="showPage('contact')">Contact</a></li>
+    </ul>
+    <p class="footer-copy">&copy; 2025 Sun &amp; Spear Studios. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: ABOUT
+═══════════════════════════════════════ -->
+<div id="page-about" class="page">
+  <div class="section">
+    <p class="section-label">Who We Are</p>
+    <h1 class="section-title">Sun &amp; Spear <em>Studios</em></h1>
+    <div class="gold-rule"></div>
+
+    <div class="mission-quote">
+      We build software in pursuit of a better world — not because it is simple, but because it matters.
+    </div>
+
+    <div class="about-grid" style="margin-top:3rem;">
+      <div>
+        <p class="body-text">
+          <strong>Sun &amp; Spear Studios</strong> is an independent software studio founded on a straightforward idea: the skills that build great products can be pointed at something good. We are not defined by any single category of software — our work spans civic education, personal privacy, and everyday utility. What unites every project is the belief that technology, done simply and honestly, can leave the world a little better than we found it.
+        </p>
+        <p class="body-text">
+          We build with intention. Our projects don't chase trends or scale for its own sake. Each one begins with a question: <em>does this genuinely help someone understand something, protect something, or simplify something?</em> If the answer is yes, we get to work.
+        </p>
+        <p class="body-text">
+          Sun &amp; Spear is founded on simplicity and the principle of giving back — structurally, not as an afterthought. From day one, every dollar our products earn flows through a framework designed to sustain our work, reward our team, and invest meaningfully in the causes we care about most.
+        </p>
+      </div>
+
+      <div class="about-logo-box">
+        <svg viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#e8c97a"/>
+              <stop offset="50%" stop-color="#c9a84c"/>
+              <stop offset="100%" stop-color="#8a6e2f"/>
+            </linearGradient>
+          </defs>
+          <path d="M60 170 A80 80 0 0 1 220 170" stroke="url(#g1)" stroke-width="3" fill="none"/>
+          <line x1="40" y1="170" x2="240" y2="170" stroke="url(#g1)" stroke-width="1.5" opacity="0.6"/>
+          <line x1="140" y1="90" x2="140" y2="68" stroke="url(#g1)" stroke-width="1.5" opacity="0.7"/>
+          <line x1="170" y1="95" x2="182" y2="76" stroke="url(#g1)" stroke-width="1.5" opacity="0.6"/>
+          <line x1="193" y1="112" x2="208" y2="98" stroke="url(#g1)" stroke-width="1.5" opacity="0.5"/>
+          <line x1="110" y1="95" x2="98" y2="76" stroke="url(#g1)" stroke-width="1.5" opacity="0.6"/>
+          <line x1="87" y1="112" x2="72" y2="98" stroke="url(#g1)" stroke-width="1.5" opacity="0.5"/>
+          <line x1="165" y1="90" x2="115" y2="200" stroke="url(#g1)" stroke-width="2.5"/>
+          <polygon points="165,90 158,108 172,104" fill="url(#g1)"/>
+          <text x="140" y="240" text-anchor="middle" font-family="Cinzel, serif" font-size="22" fill="url(#g1)" letter-spacing="4">SUN &amp; SPEAR</text>
+          <text x="140" y="265" text-anchor="middle" font-family="Cinzel, serif" font-size="10" fill="#9a8c75" letter-spacing="8">STUDIOS</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ─── VALUE PILLARS ─── -->
+    <div class="parchment-divider" style="margin:4rem 0;"></div>
+
+    <p class="section-label">What We Stand For</p>
+    <h2 class="section-title">Three <em>Pillars</em></h2>
+    <div class="gold-rule"></div>
+    <p class="body-text">
+      Forty percent of all revenue generated by Sun &amp; Spear products goes directly to 501(c)(3) non-profit organizations advancing at least one of our three core values. These are not aspirational — they are contractual commitments built into how the business operates.
+    </p>
+
+    <div class="pillar-grid">
+      <div class="pillar-card">
+        <span class="pillar-icon">🔒</span>
+        <h3>Privacy</h3>
+        <p>We believe personal data belongs to the person it describes. We support organizations actively working to pass legislation and advance the legal cause of user privacy rights in the digital age.</p>
+      </div>
+      <div class="pillar-card">
+        <span class="pillar-icon">☮️</span>
+        <h3>Peace</h3>
+        <p>Peace is not merely the absence of conflict — it is the presence of stability, opportunity, and connection. We support missions that create the conditions for peace in everyday life.</p>
+        <ul class="pillar-sub">
+          <li>Peace through Housing Stability</li>
+          <li>Peace through Food Stability</li>
+          <li>Peace through Prosperity</li>
+          <li>Peace through Sharing Knowledge</li>
+          <li>Peace through Sharing Culture</li>
+        </ul>
+      </div>
+      <div class="pillar-card">
+        <span class="pillar-icon">🌿</span>
+        <h3>Preservation</h3>
+        <p>The natural world is not a resource to be managed — it is a heritage to be kept. We support organizations securing natural land and protecting it in perpetuity for all living things.</p>
+      </div>
+    </div>
+
+    <!-- ─── REVENUE MODEL ─── -->
+    <div class="parchment-divider" style="margin:4rem 0;"></div>
+
+    <p class="section-label">How We Operate</p>
+    <h2 class="section-title">The 50 · 40 · 10 <em>Principle</em></h2>
+    <div class="gold-rule"></div>
+    <p class="body-text">
+      Every Sun &amp; Spear product is governed by the same revenue framework. It is not a pledge or a campaign — it is simply how the numbers are arranged, from the very first dollar.
+    </p>
+
+    <div class="revenue-block">
+      <div class="rev-slice">
+        <div class="rev-bar ops"></div>
+        <div class="rev-pct">50%</div>
+        <h3>Operations &amp; Growth</h3>
+        <p>Sustaining and expanding our work. This covers team salaries, development costs, infrastructure, and the investment required to bring future projects to life.</p>
+      </div>
+      <div class="rev-slice">
+        <div class="rev-bar give"></div>
+        <div class="rev-pct">40%</div>
+        <h3>Giving Back</h3>
+        <p>Distributed to 501(c)(3) organizations advancing Privacy, Peace, or Preservation. This is the core of what Sun &amp; Spear is — a studio that earns in order to give.</p>
+      </div>
+      <div class="rev-slice">
+        <div class="rev-bar team"></div>
+        <div class="rev-pct">10%</div>
+        <h3>Team Bonuses</h3>
+        <p>Reserved for the people who make it possible. Every member of our team shares directly in the success of the work they helped create.</p>
+      </div>
+    </div>
+
+    <!-- ─── TEAM ─── -->
+    <div class="parchment-divider" style="margin:4rem 0;"></div>
+
+    <p class="section-label">The Team</p>
+    <h2 class="section-title">The <em>People</em> Behind It</h2>
+    <div class="gold-rule"></div>
+    <p class="body-text">Sun &amp; Spear Studios is an independent studio. More team information coming soon.</p>
+
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">✦</div>
+        <h3>Founder &amp; Director</h3>
+        <p style="color:var(--muted);font-size:0.85rem;">Sun &amp; Spear Studios</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-brand">SUN &amp; SPEAR STUDIOS<small>Software for the betterment of the world</small></div>
+    <ul class="footer-links">
+      <li><a onclick="showPage('home')">Home</a></li>
+      <li><a onclick="showPage('projects')">Projects</a></li>
+      <li><a onclick="showPage('help')">Help</a></li>
+      <li><a onclick="showPage('privacy')">Privacy Policy</a></li>
+      <li><a onclick="showPage('contact')">Contact</a></li>
+    </ul>
+    <p class="footer-copy">&copy; 2025 Sun &amp; Spear Studios. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: PROJECTS
+═══════════════════════════════════════ -->
+<div id="page-projects" class="page">
+  <div class="section">
+    <p class="section-label">Our Work</p>
+    <h1 class="section-title">Projects</h1>
+    <div class="gold-rule"></div>
+    <p class="body-text">
+      Sun &amp; Spear projects are as varied as the problems worth solving. They may be games, utilities, advocacy tools, or something we haven't named yet. Each one is built with the same discipline: straightforward purpose, honest execution, and a share of every dollar pointed at something good.
+    </p>
+
+    <div style="margin-top:3rem;">
+
+      <!-- OF THE PEOPLE -->
+      <div class="project-card">
+        <div class="project-thumb">
+          <span class="thumb-icon">🏛️</span>
+        </div>
+        <div class="project-body">
+          <span class="project-status status-active">Active — Coming Soon</span>
+          <h2><em>Of The People</em></h2>
+          <p>
+            A political simulation built on the real architecture of American democracy. Players navigate a complete career path — from city council to the Oval Office — across more than 8,000 real U.S. districts, managing campaigns, building legislative coalitions among 22 voter factions, and confronting the actual complexities of self-governance.
+          </p>
+          <p>
+            <em>Of The People</em> is not a power fantasy. It is a sincere attempt to make the unglamorous, essential work of democratic participation something people can experience, understand, and respect. Built on U.S. Census data. Designed for mobile.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">Mobile</span>
+            <span class="project-tag">Civic Education</span>
+            <span class="project-tag">Simulation</span>
+            <span class="project-tag">iOS &amp; Android</span>
+          </div>
+          <a class="project-link" onclick="showPage('home')">View Game Page →</a>
+        </div>
+      </div>
+
+      <!-- FUTURE PROJECT: PRIVACY -->
+      <div class="project-card">
+        <div class="project-thumb">
+          <span class="thumb-icon">🔒</span>
+        </div>
+        <div class="project-body">
+          <span class="project-status status-upcoming">In Development</span>
+          <h2>Privacy <em>Tools</em></h2>
+          <p>
+            Our next project centers on one of our founding pillars: personal privacy. We are developing a practical software tool designed to help everyday people understand, manage, and assert their digital privacy rights — without requiring a technical background to do so.
+          </p>
+          <p>More details will be shared as development progresses.</p>
+          <div class="project-tags">
+            <span class="project-tag">Privacy</span>
+            <span class="project-tag">Utility</span>
+            <span class="project-tag">Coming Next</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FUTURE PROJECT: PANTRY -->
+      <div class="project-card">
+        <div class="project-thumb">
+          <span class="thumb-icon">🥫</span>
+        </div>
+        <div class="project-body">
+          <span class="project-status status-upcoming">Future</span>
+          <h2>Simple <em>Utilities</em></h2>
+          <p>
+            Not every problem calls for a grand statement. Some tools just need to work well and get out of the way. We are exploring lightweight utility applications — starting with household pantry management — that reflect our commitment to simplicity at every scale.
+          </p>
+          <p>Details to come. Sometimes the most useful software is also the quietest.</p>
+          <div class="project-tags">
+            <span class="project-tag">Utility</span>
+            <span class="project-tag">Everyday Use</span>
+            <span class="project-tag">Future</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:3rem; padding:2rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); text-align:center;">
+      <p class="section-label" style="text-align:center;">What comes next</p>
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--cream2);margin-bottom:1rem;">Our roadmap is guided by what matters — not what's popular.</h3>
+      <p style="font-size:0.92rem;color:var(--muted);max-width:540px;margin:0 auto 1.5rem;">If you have an idea, a cause, or a collaboration in mind, we are always willing to listen.</p>
+      <button class="store-btn" style="display:inline-flex;margin-top:0.5rem;" onclick="showPage('contact')">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        <span class="btn-label"><span>Get In Touch</span></span>
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-brand">SUN &amp; SPEAR STUDIOS<small>Software for the betterment of the world</small></div>
+    <ul class="footer-links">
+      <li><a onclick="showPage('home')">Home</a></li>
+      <li><a onclick="showPage('about')">About</a></li>
+      <li><a onclick="showPage('help')">Help</a></li>
+      <li><a onclick="showPage('privacy')">Privacy Policy</a></li>
+      <li><a onclick="showPage('contact')">Contact</a></li>
+    </ul>
+    <p class="footer-copy">&copy; 2025 Sun &amp; Spear Studios. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: HELP
+═══════════════════════════════════════ -->
+<div id="page-help" class="page">
+  <div class="section">
+    <p class="section-label">Gameplay Support</p>
+    <h1 class="section-title">Help &amp; <em>Game Guide</em></h1>
+    <div class="gold-rule"></div>
+    <p class="body-text">New to <em>Of The People</em>? These resources will help you navigate your political career — from your first city council race to the floor of the United States Senate.</p>
+
+    <div class="help-grid">
+      <div class="help-card">
+        <h3>🗳️ Getting Started</h3>
+        <p>Learn to create your character, choose your starting office, and understand the core mechanics of your first campaign.</p>
+      </div>
+      <div class="help-card">
+        <h3>🏛️ Governing & Legislation</h3>
+        <p>Understand how to sponsor bills, build legislative coalitions, and navigate the committee process at each level of government.</p>
+      </div>
+      <div class="help-card">
+        <h3>🤝 Voter Factions</h3>
+        <p>The game features 22 distinct voter factions. Learn their values, concerns, and how to build winning coalitions without alienating your base.</p>
+      </div>
+      <div class="help-card">
+        <h3>💰 Fundraising & Finances</h3>
+        <p>Master your campaign finances — from grassroots drives and PAC money to managing staff costs and media buys.</p>
+      </div>
+      <div class="help-card">
+        <h3>📺 Media Strategy</h3>
+        <p>Control your public narrative with strategic media placements, debate prep, and opposition research on your rivals.</p>
+      </div>
+      <div class="help-card">
+        <h3>📅 Career Progression</h3>
+        <p>Plan your path from Mayor or City Council all the way to the Presidency. Each office unlocks new mechanics and challenges.</p>
+      </div>
+    </div>
+
+    <div class="parchment-divider" style="margin:3.5rem 0;"></div>
+
+    <p class="section-label">Common Questions</p>
+    <h2 class="section-title">Frequently Asked <em>Questions</em></h2>
+    <div class="gold-rule"></div>
+
+    <div class="faq">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How do I win my first election?
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">Focus on building support with the voter factions most prevalent in your district. Manage your campaign finances carefully, invest in name recognition early, and don't neglect your ground game. Starting on Easy difficulty is recommended for first-time players.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What is a "voter faction" and why does it matter?
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">Voter factions are the 22 distinct ideological and demographic groups that make up the electorate. Each faction has unique policy priorities and responds differently to your actions. Understanding and balancing faction relationships is the core strategic challenge of the game.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Can I run as an independent or third-party candidate?
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">Yes. While running as a major party candidate provides structural advantages (party infrastructure, easier ballot access), independent and third-party runs are possible and represent a unique strategic challenge with different coalition-building requirements.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How does opposition research work?
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">Your Opposition Research staff will uncover vulnerabilities in your opponent's record over time. You can then choose to use this information in debate attacks, media campaigns, or hold it in reserve. Be aware — your opponents are conducting research on you too.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How do I save my game progress?
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">Of The People features automatic save functionality. Your progress is saved at key milestones including after elections, legislative sessions, and major campaign events. You can also manually save from the main menu at any time.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Is this game suitable for younger players?
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">Of The People is designed as an educational civic simulation appropriate for players 12 and older. The game contains no graphic content, and its focus on democratic processes makes it a valuable learning tool for students and civics enthusiasts of all ages.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          I found a bug. How do I report it?
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">Please use our Contact page to submit a bug report. Include a description of what happened, what you expected to happen, and your device model and operating system version. We review all reports and release regular updates.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:3rem; padding:2rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); text-align:center;">
+      <p class="section-label" style="text-align:center;">Still need help?</p>
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--cream2);margin-bottom:1rem;">Our support team is happy to assist.</h3>
+      <button class="store-btn" style="display:inline-flex;margin-top:0.5rem;" onclick="showPage('contact')">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        <span class="btn-label"><span>Contact Support</span></span>
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-brand">SUN &amp; SPEAR STUDIOS<small>Software for the betterment of the world</small></div>
+    <ul class="footer-links">
+      <li><a onclick="showPage('home')">Home</a></li>
+      <li><a onclick="showPage('about')">About</a></li>
+      <li><a onclick="showPage('projects')">Projects</a></li>
+      <li><a onclick="showPage('privacy')">Privacy Policy</a></li>
+      <li><a onclick="showPage('contact')">Contact</a></li>
+    </ul>
+    <p class="footer-copy">&copy; 2025 Sun &amp; Spear Studios. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: PRIVACY POLICY
+═══════════════════════════════════════ -->
+<div id="page-privacy" class="page">
+  <div class="section">
+    <p class="section-label">Legal</p>
+    <h1 class="section-title">Privacy <em>Policy</em></h1>
+    <div class="gold-rule"></div>
+    <p class="body-text" style="font-size:0.85rem;color:var(--muted);">Effective Date: January 1, 2025 &nbsp;|&nbsp; Last Updated: January 1, 2025</p>
+    <p class="body-text">Sun &amp; Spear Studios ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our mobile application <em>Of The People</em> and visit our website at sunandspearstudios.com.</p>
+    <p class="body-text">Please read this policy carefully. By using our application or website, you agree to the terms described herein.</p>
+
+    <div class="parchment-divider" style="margin:2.5rem 0;"></div>
+
+    <div class="legal-section">
+      <h2>1. Information We Collect</h2>
+      <p><strong style="color:var(--cream2);">Information You Provide Directly:</strong></p>
+      <ul>
+        <li>Contact information submitted through our Contact Us form (name, email address, message content)</li>
+        <li>Support requests and bug reports you submit to us</li>
+        <li>Feedback and correspondence you send to us voluntarily</li>
+      </ul>
+      <p><strong style="color:var(--cream2);">Information Collected Automatically:</strong></p>
+      <ul>
+        <li>Device information (device type, operating system, unique device identifiers)</li>
+        <li>App usage data (features accessed, gameplay session duration, in-game events)</li>
+        <li>Crash reports and diagnostic data to improve app stability</li>
+        <li>Log data collected through your use of our website (IP address, browser type, referring URLs)</li>
+      </ul>
+      <p><strong style="color:var(--cream2);">Information We Do Not Collect:</strong></p>
+      <ul>
+        <li>We do not collect financial information. The app does not process in-app purchases at this time.</li>
+        <li>We do not collect precise geolocation data.</li>
+        <li>We do not knowingly collect information from children under the age of 13.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section">
+      <h2>2. How We Use Your Information</h2>
+      <p>We use the information we collect to:</p>
+      <ul>
+        <li>Provide, operate, and improve the <em>Of The People</em> application and our website</li>
+        <li>Respond to your inquiries, support requests, and feedback</li>
+        <li>Analyze usage patterns to improve gameplay experience and educational effectiveness</li>
+        <li>Diagnose technical issues and ensure app stability</li>
+        <li>Comply with applicable laws and regulations</li>
+        <li>Protect against fraudulent, unauthorized, or illegal activity</li>
+      </ul>
+      <p>We do not sell your personal information to third parties. We do not use your information for behavioral advertising.</p>
+    </div>
+
+    <div class="legal-section">
+      <h2>3. Data Sharing and Disclosure</h2>
+      <p>We may share your information in the following limited circumstances:</p>
+      <ul>
+        <li><strong style="color:var(--cream2);">Service Providers:</strong> We may share data with third-party vendors who assist in operating our app and website (e.g., analytics providers, crash reporting services). These parties are contractually obligated to use your data only as directed by us.</li>
+        <li><strong style="color:var(--cream2);">Legal Requirements:</strong> We may disclose information if required to do so by law, court order, or governmental authority.</li>
+        <li><strong style="color:var(--cream2);">Business Transfers:</strong> In the event of a merger, acquisition, or sale of assets, user information may be transferred as part of that transaction. We will notify users of any such change.</li>
+        <li><strong style="color:var(--cream2);">With Your Consent:</strong> We may share your information for any other purpose with your explicit consent.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section">
+      <h2>4. Data Storage and Retention</h2>
+      <p>Your data is stored on secure servers. Gameplay progress is stored locally on your device. We retain personal information only as long as necessary to fulfill the purposes described in this policy, or as required by law. You may request deletion of your data at any time by contacting us.</p>
+    </div>
+
+    <div class="legal-section">
+      <h2>5. Your Rights and Choices</h2>
+      <p>Depending on your jurisdiction, you may have the right to:</p>
+      <ul>
+        <li>Access the personal information we hold about you</li>
+        <li>Request correction of inaccurate data</li>
+        <li>Request deletion of your personal data</li>
+        <li>Opt out of certain data processing activities</li>
+        <li>Receive a copy of your data in a portable format</li>
+      </ul>
+      <p>To exercise any of these rights, please contact us at <a href="mailto:privacy@sunandspearstudios.com" style="color:var(--gold);">privacy@sunandspearstudios.com</a>.</p>
+    </div>
+
+    <div class="legal-section">
+      <h2>6. Children's Privacy</h2>
+      <p><em>Of The People</em> is intended for users aged 12 and older. We do not knowingly collect personal information from children under 13. If we become aware that we have inadvertently received personal information from a child under 13, we will delete such information promptly. If you believe a child under 13 has provided us with personal information, please contact us immediately.</p>
+    </div>
+
+    <div class="legal-section">
+      <h2>7. Third-Party Links and Services</h2>
+      <p>Our website and application may contain links to third-party platforms including the Google Play Store and Apple App Store. This Privacy Policy does not apply to those third-party services. We encourage you to review the privacy policies of any third-party services you access.</p>
+    </div>
+
+    <div class="legal-section">
+      <h2>8. Security</h2>
+      <p>We implement reasonable administrative, technical, and physical safeguards to protect your information from unauthorized access, use, alteration, or disclosure. However, no method of transmission over the internet or electronic storage is completely secure, and we cannot guarantee absolute security.</p>
+    </div>
+
+    <div class="legal-section">
+      <h2>9. Changes to This Policy</h2>
+      <p>We reserve the right to update this Privacy Policy at any time. We will notify users of material changes by posting the new policy on this page and updating the "Last Updated" date. Your continued use of the application or website after changes are posted constitutes your acceptance of those changes.</p>
+    </div>
+
+    <div class="legal-section">
+      <h2>10. Contact Us</h2>
+      <p>If you have questions or concerns about this Privacy Policy, please contact us:</p>
+      <p><strong style="color:var(--cream2);">Sun &amp; Spear Studios</strong><br/>
+      Email: <a href="mailto:privacy@sunandspearstudios.com" style="color:var(--gold);">privacy@sunandspearstudios.com</a><br/>
+      Website: <a href="#" onclick="showPage('contact')" style="color:var(--gold);">sunandspearstudios.com/contact</a></p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-brand">SUN &amp; SPEAR STUDIOS<small>Software for the betterment of the world</small></div>
+    <ul class="footer-links">
+      <li><a onclick="showPage('home')">Home</a></li>
+      <li><a onclick="showPage('about')">About</a></li>
+      <li><a onclick="showPage('projects')">Projects</a></li>
+      <li><a onclick="showPage('help')">Help</a></li>
+      <li><a onclick="showPage('contact')">Contact</a></li>
+    </ul>
+    <p class="footer-copy">&copy; 2025 Sun &amp; Spear Studios. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE: CONTACT
+═══════════════════════════════════════ -->
+<div id="page-contact" class="page">
+  <div class="section">
+    <p class="section-label">Get In Touch</p>
+    <h1 class="section-title">Contact <em>Us</em></h1>
+    <div class="gold-rule"></div>
+    <p class="body-text">Whether you have a question about gameplay, a press inquiry, a bug to report, or just want to say hello — we'd love to hear from you.</p>
+
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Studio</h3>
+        <p>Sun &amp; Spear Studios<br/>
+        Independent Game Development<br/>
+        Wilmington, North Carolina</p>
+
+        <h3>General Inquiries</h3>
+        <p><a href="/cdn-cgi/l/email-protection#b1d9d4dddddef1c2c4dfd0dfd5c2c1d4d0c3c2c5c4d5d8dec29fd2dedc"><span class="__cf_email__" data-cfemail="4e262b2222210e3d3b202f202a3d3e2b2f3c3d3a3b2a27213d602d2123">[email&#160;protected]</span></a></p>
+
+        <h3>Press &amp; Media</h3>
+        <p><a href="/cdn-cgi/l/email-protection#8cfcfee9ffffccfff9e2ede2e8fffce9edfefff8f9e8e5e3ffa2efe3e1"><span class="__cf_email__" data-cfemail="98e8eafdebebd8ebedf6f9f6fcebe8fdf9eaebecedfcf1f7ebb6fbf7f5">[email&#160;protected]</span></a></p>
+
+        <h3>Privacy &amp; Legal</h3>
+        <p><a href="/cdn-cgi/l/email-protection#1565677c6374766c5566607b747b716665707467666160717c7a663b767a78"><span class="__cf_email__" data-cfemail="50202239263133291023253e313e34232035312223242534393f237e333f3d">[email&#160;protected]</span></a></p>
+
+        <h3>Response Times</h3>
+        <p>We aim to respond to all inquiries within 2–3 business days. For urgent gameplay support, please note your issue clearly in the subject field.</p>
+      </div>
+
+      <div class="contact-form">
+        <label for="cf-name">Your Name</label>
+        <input type="text" id="cf-name" placeholder="First &amp; Last Name" />
+
+        <label for="cf-email">Email Address</label>
+        <input type="email" id="cf-email" placeholder="you@example.com" />
+
+        <label for="cf-subject">Subject</label>
+        <select id="cf-subject">
+          <option value="" disabled selected>Select a topic…</option>
+          <option>Gameplay Support</option>
+          <option>Bug Report</option>
+          <option>Feature Request</option>
+          <option>Press &amp; Media</option>
+          <option>Partnership Inquiry</option>
+          <option>Privacy / Data Request</option>
+          <option>General Question</option>
+        </select>
+
+        <label for="cf-message">Message</label>
+        <textarea id="cf-message" placeholder="Tell us what's on your mind…"></textarea>
+
+        <button class="submit-btn" onclick="submitContact()">Send Message ◆</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-brand">SUN &amp; SPEAR STUDIOS<small>Software for the betterment of the world</small></div>
+    <ul class="footer-links">
+      <li><a onclick="showPage('home')">Home</a></li>
+      <li><a onclick="showPage('about')">About</a></li>
+      <li><a onclick="showPage('projects')">Projects</a></li>
+      <li><a onclick="showPage('help')">Help</a></li>
+      <li><a onclick="showPage('privacy')">Privacy Policy</a></li>
+    </ul>
+    <p class="footer-copy">&copy; 2025 Sun &amp; Spear Studios. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">Message sent — we'll be in touch shortly.</div>
+
+<script>
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    const navEl = document.getElementById('nav-' + id);
+    if (navEl) navEl.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleFaq(el) {
+    el.classList.toggle('open');
+    const answer = el.nextElementSibling;
+    answer.classList.toggle('open');
+  }
+
+  function submitContact() {
+    const name = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const msg = document.getElementById('cf-message').value.trim();
+    if (!name || !email || !msg) {
+      alert('Please fill in your name, email, and message before sending.');
+      return;
+    }
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+    document.getElementById('cf-name').value = '';
+    document.getElementById('cf-email').value = '';
+    document.getElementById('cf-subject').selectedIndex = 0;
+    document.getElementById('cf-message').value = '';
+  }
+</script>
+</body>
+</html>
